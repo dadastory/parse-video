@@ -7,8 +7,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type huYa struct {
-}
+type huYa struct{ requestClient }
 
 func (h huYa) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	re := regexp.MustCompile(`\/(\d+).html`)
@@ -28,7 +27,7 @@ func (h huYa) parseVideoID(videoId string) (*VideoParseInfo, error) {
 		HttpHeaderReferer:   "https://v.huya.com/",
 	}
 
-	client := newClient()
+	client := h.newClient()
 	res, err := client.R().
 		SetHeaders(headers).
 		Get(reqUrl)

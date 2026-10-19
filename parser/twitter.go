@@ -13,10 +13,10 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type twitter struct{}
+type twitter struct{ requestClient }
 
 func (t twitter) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
-	client := newClient()
+	client := t.newClient()
 
 	// 处理 t.co 短链: 需要先跟随重定向获取真实URL
 	if strings.Contains(shareUrl, "t.co/") {
@@ -47,7 +47,7 @@ func (t twitter) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	token := t.getToken(videoId)
 	apiUrl := fmt.Sprintf("https://cdn.syndication.twimg.com/tweet-result?id=%s&token=%s", videoId, token)
 
-	client := newClient()
+	client := t.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36").
 		SetHeader("Accept", "application/json").

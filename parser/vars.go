@@ -84,154 +84,159 @@ type videoSourceInfo struct {
 }
 
 // 视频渠道映射信息
-var videoSourceInfoMapping = map[string]videoSourceInfo{
-	SourceDouYin: {
-		VideoShareUrlDomain: []string{"v.douyin.com", "www.iesdouyin.com", "www.douyin.com"},
-		VideoShareUrlParser: douYin{},
-		VideoIdParser:       douYin{},
-	},
-	SourceKuaiShou: {
-		VideoShareUrlDomain: []string{"v.kuaishou.com", "www.kuaishou.com"},
-		VideoShareUrlParser: kuaiShou{},
-	},
-	SourceZuiYou: {
-		VideoShareUrlDomain: []string{"share.xiaochuankeji.cn"},
-		VideoShareUrlParser: zuiYou{},
-	},
-	SourceXiGua: {
-		VideoShareUrlDomain: []string{"v.ixigua.com"},
-		VideoShareUrlParser: xiGua{},
-		VideoIdParser:       xiGua{},
-	},
-	SourcePiPiXia: {
-		VideoShareUrlDomain: []string{"h5.pipix.com"},
-		VideoShareUrlParser: piPiXia{},
-		VideoIdParser:       piPiXia{},
-	},
-	SourceWeiShi: {
-		VideoShareUrlDomain: []string{"isee.weishi.qq.com"},
-		VideoShareUrlParser: weiShi{},
-		VideoIdParser:       weiShi{},
-	},
-	SourceHuoShan: {
-		VideoShareUrlDomain: []string{"share.huoshan.com"},
-		VideoShareUrlParser: huoShan{},
-		VideoIdParser:       huoShan{},
-	},
-	SourceLiShiPin: {
-		VideoShareUrlDomain: []string{"www.pearvideo.com"},
-		VideoShareUrlParser: liShiPin{},
-		VideoIdParser:       liShiPin{},
-	},
-	SourcePiPiGaoXiao: {
-		VideoShareUrlDomain: []string{"h5.pipigx.com"},
-		VideoShareUrlParser: piPiGaoXiao{},
-		VideoIdParser:       piPiGaoXiao{},
-	},
-	SourceQuanMin: {
-		VideoShareUrlDomain: []string{"xspshare.baidu.com"},
-		VideoShareUrlParser: quanMin{},
-		VideoIdParser:       quanMin{},
-	},
-	SourceHuYa: {
-		VideoShareUrlDomain: []string{"v.huya.com"},
-		VideoShareUrlParser: huYa{},
-		VideoIdParser:       huYa{},
-	},
-	SourceAcFun: {
-		VideoShareUrlDomain: []string{"www.acfun.cn"},
-		VideoShareUrlParser: acFun{},
-		VideoIdParser:       acFun{},
-	},
-	SourceWeiBo: {
-		VideoShareUrlDomain: []string{"weibo.com"},
-		VideoShareUrlParser: weiBo{},
-		VideoIdParser:       weiBo{},
-	},
-	SourceLvZhou: {
-		VideoShareUrlDomain: []string{"weibo.cn"},
-		VideoShareUrlParser: lvZhou{},
-		VideoIdParser:       lvZhou{},
-	},
-	SourceMeiPai: {
-		VideoShareUrlDomain: []string{"meipai.com"},
-		VideoShareUrlParser: meiPai{},
-		VideoIdParser:       meiPai{},
-	},
-	SourceDouPai: {
-		VideoShareUrlDomain: []string{"doupai.cc"},
-		VideoShareUrlParser: douPai{},
-		VideoIdParser:       douPai{},
-	},
-	SourceQuanMinKGe: {
-		VideoShareUrlDomain: []string{"kg.qq.com"},
-		VideoShareUrlParser: quanMinKGe{},
-		VideoIdParser:       quanMinKGe{},
-	},
-	SourceSixRoom: {
-		VideoShareUrlDomain: []string{"6.cn"},
-		VideoShareUrlParser: sixRoom{},
-		VideoIdParser:       sixRoom{},
-	},
-	SourceXinPianChang: {
-		VideoShareUrlDomain: []string{"xinpianchang.com"},
-		VideoShareUrlParser: xinPianChang{},
-	},
-	SourceHaoKan: {
-		VideoShareUrlDomain: []string{
-			"haokan.baidu.com",
-			"haokan.hao123.com",
+var videoSourceInfoMapping = sourceInfoMapping(requestClient{})
+
+func sourceInfoMapping(client requestClient) map[string]videoSourceInfo {
+	return map[string]videoSourceInfo{
+		SourceDouYin: {
+			VideoShareUrlDomain: []string{"v.douyin.com", "www.iesdouyin.com", "www.douyin.com"},
+			VideoShareUrlParser: douYin{requestClient: client},
+			VideoIdParser:       douYin{requestClient: client},
 		},
-		VideoShareUrlParser: haoKan{},
-		VideoIdParser:       haoKan{},
-	},
-	SourceRedBook: {
-		VideoShareUrlDomain: []string{
-			"www.xiaohongshu.com",
-			"xhslink.com",
-			"xhslink.cn",
+		SourceKuaiShou: {
+			VideoShareUrlDomain: []string{"v.kuaishou.com", "www.kuaishou.com"},
+			VideoShareUrlParser: kuaiShou{requestClient: client},
 		},
-		VideoShareUrlParser: redBook{},
-	},
-	SourceBiliBili: {
-		VideoShareUrlDomain: []string{
-			"bilibili.com",
-			"b23.tv",
+		SourceZuiYou: {
+			VideoShareUrlDomain: []string{"share.xiaochuankeji.cn"},
+			VideoShareUrlParser: zuiYou{requestClient: client},
 		},
-		VideoShareUrlParser: biliBili{},
-	},
-	SourceTwitter: {
-		VideoShareUrlDomain: []string{
-			"x.com",
-			"twitter.com",
-			"t.co",
+		SourceXiGua: {
+			VideoShareUrlDomain: []string{"v.ixigua.com"},
+			VideoShareUrlParser: xiGua{requestClient: client},
+			VideoIdParser:       xiGua{requestClient: client},
 		},
-		VideoShareUrlParser: twitter{},
-		VideoIdParser:       twitter{},
-	},
-	SourceQQVideo: {
-		VideoShareUrlDomain: []string{
-			"v.qq.com",
+		SourcePiPiXia: {
+			VideoShareUrlDomain: []string{"h5.pipix.com"},
+			VideoShareUrlParser: piPiXia{requestClient: client},
+			VideoIdParser:       piPiXia{requestClient: client},
 		},
-		VideoShareUrlParser: qqVideo{},
-		VideoIdParser:       qqVideo{},
-	},
-	SourceSohu: {
-		VideoShareUrlDomain: []string{
-			"tv.sohu.com",
-			"my.tv.sohu.com",
+		SourceWeiShi: {
+			VideoShareUrlDomain: []string{"isee.weishi.qq.com"},
+			VideoShareUrlParser: weiShi{requestClient: client},
+			VideoIdParser:       weiShi{requestClient: client},
 		},
-		VideoShareUrlParser: sohuVideo{},
-		VideoIdParser:       sohuVideo{},
-	},
-	SourceCCTV: {
-		VideoShareUrlDomain: []string{
-			"tv.cctv.cn",
-			"tv.cctv.com",
+		SourceHuoShan: {
+			VideoShareUrlDomain: []string{"share.huoshan.com"},
+			VideoShareUrlParser: huoShan{requestClient: client},
+			VideoIdParser:       huoShan{requestClient: client},
 		},
-		VideoShareUrlParser: cctvVideo{},
-		VideoIdParser:       cctvVideo{},
-	},
+		SourceLiShiPin: {
+			VideoShareUrlDomain: []string{"www.pearvideo.com"},
+			VideoShareUrlParser: liShiPin{requestClient: client},
+			VideoIdParser:       liShiPin{requestClient: client},
+		},
+		SourcePiPiGaoXiao: {
+			VideoShareUrlDomain: []string{"h5.pipigx.com"},
+			VideoShareUrlParser: piPiGaoXiao{requestClient: client},
+			VideoIdParser:       piPiGaoXiao{requestClient: client},
+		},
+		SourceQuanMin: {
+			VideoShareUrlDomain: []string{"xspshare.baidu.com"},
+			VideoShareUrlParser: quanMin{requestClient: client},
+			VideoIdParser:       quanMin{requestClient: client},
+		},
+		SourceHuYa: {
+			VideoShareUrlDomain: []string{"v.huya.com"},
+			VideoShareUrlParser: huYa{requestClient: client},
+			VideoIdParser:       huYa{requestClient: client},
+		},
+		SourceAcFun: {
+			VideoShareUrlDomain: []string{"www.acfun.cn"},
+			VideoShareUrlParser: acFun{requestClient: client},
+			VideoIdParser:       acFun{requestClient: client},
+		},
+		SourceWeiBo: {
+			VideoShareUrlDomain: []string{"weibo.com"},
+			VideoShareUrlParser: weiBo{requestClient: client},
+			VideoIdParser:       weiBo{requestClient: client},
+		},
+		SourceLvZhou: {
+			VideoShareUrlDomain: []string{"weibo.cn"},
+			VideoShareUrlParser: lvZhou{requestClient: client},
+			VideoIdParser:       lvZhou{requestClient: client},
+		},
+		SourceMeiPai: {
+			VideoShareUrlDomain: []string{"meipai.com"},
+			VideoShareUrlParser: meiPai{requestClient: client},
+			VideoIdParser:       meiPai{requestClient: client},
+		},
+		SourceDouPai: {
+			VideoShareUrlDomain: []string{"doupai.cc"},
+			VideoShareUrlParser: douPai{requestClient: client},
+			VideoIdParser:       douPai{requestClient: client},
+		},
+		SourceQuanMinKGe: {
+			VideoShareUrlDomain: []string{"kg.qq.com"},
+			VideoShareUrlParser: quanMinKGe{requestClient: client},
+			VideoIdParser:       quanMinKGe{requestClient: client},
+		},
+		SourceSixRoom: {
+			VideoShareUrlDomain: []string{"6.cn"},
+			VideoShareUrlParser: sixRoom{requestClient: client},
+			VideoIdParser:       sixRoom{requestClient: client},
+		},
+		SourceXinPianChang: {
+			VideoShareUrlDomain: []string{"xinpianchang.com"},
+			VideoShareUrlParser: xinPianChang{requestClient: client},
+		},
+		SourceHaoKan: {
+			VideoShareUrlDomain: []string{
+				"haokan.baidu.com",
+				"haokan.hao123.com",
+			},
+			VideoShareUrlParser: haoKan{requestClient: client},
+			VideoIdParser:       haoKan{requestClient: client},
+		},
+		SourceRedBook: {
+			VideoShareUrlDomain: []string{
+				"www.xiaohongshu.com",
+				"xhslink.com",
+				"xhslink.cn",
+			},
+			VideoShareUrlParser: redBook{requestClient: client},
+		},
+		SourceBiliBili: {
+			VideoShareUrlDomain: []string{
+				"bilibili.com",
+				"b23.tv",
+			},
+			VideoShareUrlParser: biliBili{requestClient: client},
+		},
+		SourceTwitter: {
+			VideoShareUrlDomain: []string{
+				"x.com",
+				"twitter.com",
+				"t.co",
+			},
+			VideoShareUrlParser: twitter{requestClient: client},
+			VideoIdParser:       twitter{requestClient: client},
+		},
+		SourceQQVideo: {
+			VideoShareUrlDomain: []string{
+				"v.qq.com",
+			},
+			VideoShareUrlParser: qqVideo{requestClient: client},
+			VideoIdParser:       qqVideo{requestClient: client},
+		},
+		SourceSohu: {
+			VideoShareUrlDomain: []string{
+				"tv.sohu.com",
+				"my.tv.sohu.com",
+			},
+			VideoShareUrlParser: sohuVideo{requestClient: client},
+			VideoIdParser:       sohuVideo{requestClient: client},
+		},
+		SourceCCTV: {
+			VideoShareUrlDomain: []string{
+				"tv.cctv.cn",
+				"tv.cctv.com",
+			},
+			VideoShareUrlParser: cctvVideo{requestClient: client},
+			VideoIdParser:       cctvVideo{requestClient: client},
+		},
+	}
+
 }
 
 // VideoSourceInfoMapping 导出的视频渠道映射信息，供外部使用

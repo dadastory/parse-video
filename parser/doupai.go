@@ -8,8 +8,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type douPai struct {
-}
+type douPai struct{ requestClient }
 
 func (d douPai) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	urlInfo, err := url.Parse(shareUrl)
@@ -29,7 +28,7 @@ func (d douPai) parseVideoID(videoId string) (*VideoParseInfo, error) {
 		HttpHeaderUserAgent: DefaultUserAgent,
 	}
 
-	client := newClient()
+	client := d.newClient()
 	res, err := client.R().
 		SetHeaders(headers).
 		Get(reqUrl)

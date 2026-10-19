@@ -7,12 +7,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type weiShi struct {
-}
+type weiShi struct{ requestClient }
 
 func (w weiShi) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := "https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid=" + videoId
-	client := newClient()
+	client := w.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(reqUrl)

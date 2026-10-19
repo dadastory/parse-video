@@ -12,7 +12,7 @@ import (
 var cctvGuidRe = regexp.MustCompile(`var\s+guid\s*=\s*"([^"]+)"`)
 
 // cctvVideo 央视网视频解析器
-type cctvVideo struct{}
+type cctvVideo struct{ requestClient }
 
 // parseShareUrl 根据分享链接解析央视网视频信息
 func (c cctvVideo) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
@@ -37,7 +37,7 @@ func (c cctvVideo) parseVideoID(videoId string) (*VideoParseInfo, error) {
 		videoId,
 	)
 
-	client := newClient()
+	client := c.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(apiUrl)
@@ -79,7 +79,7 @@ func (c cctvVideo) parseVideoID(videoId string) (*VideoParseInfo, error) {
 
 // extractGuid 从页面 URL 请求并提取视频 GUID
 func (c cctvVideo) extractGuid(pageUrl string) (string, error) {
-	client := newClient()
+	client := c.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(pageUrl)

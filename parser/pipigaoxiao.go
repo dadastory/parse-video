@@ -8,8 +8,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type piPiGaoXiao struct {
-}
+type piPiGaoXiao struct{ requestClient }
 
 func (p piPiGaoXiao) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := "https://share.ippzone.com/ppapi/share/fetch_content"
@@ -19,7 +18,7 @@ func (p piPiGaoXiao) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	}
 	postData := "{\"pid\":" + videoId + ",\"type\":\"post\",\"mid\":null}"
 
-	client := newClient()
+	client := p.newClient()
 	res, err := client.R().
 		SetHeaders(headers).
 		SetBody([]byte(postData)).

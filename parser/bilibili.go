@@ -14,7 +14,7 @@ import (
 
 const UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
 
-type biliBili struct{}
+type biliBili struct{ requestClient }
 
 func (b biliBili) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	bvid, err := b.getBvidFromURL(shareUrl)
@@ -121,7 +121,7 @@ func (b biliBili) getBvidFromURL(rawURL string) (string, error) {
 	}
 
 	if strings.Contains(parsedURL.Host, "b23.tv") {
-		client := newClient()
+		client := b.newClient()
 		client.SetRedirectPolicy(resty.NoRedirectPolicy())
 		resp, err := client.R().
 			SetHeader(HttpHeaderUserAgent, UserAgent).
@@ -151,7 +151,7 @@ func (b biliBili) getBvidFromURL(rawURL string) (string, error) {
 }
 
 func (b biliBili) sendBiliRequest(apiURL string) ([]byte, error) {
-	client := newClient()
+	client := b.newClient()
 	resp, err := client.R().
 		SetHeader(HttpHeaderUserAgent, UserAgent).
 		// 如需爬取更高清的视频请取消这里的注释

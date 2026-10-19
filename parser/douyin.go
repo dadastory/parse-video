@@ -15,12 +15,12 @@ import (
 	"golang.org/x/net/html"
 )
 
-type douYin struct{}
+type douYin struct{ requestClient }
 
 func (d douYin) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := fmt.Sprintf("https://www.iesdouyin.com/share/video/%s", videoId)
 
-	client := newClient()
+	client := d.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1").
 		Get(reqUrl)
@@ -180,7 +180,7 @@ func (d douYin) parseAppShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	// 适配App分享链接类型:
 	// https://v.douyin.com/xxxxxx/
 
-	client := newClient()
+	client := d.newClient()
 	// disable redirects in the HTTP client, get params before redirects
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 	res, err := client.R().
@@ -206,7 +206,7 @@ func (d douYin) parseAppShareUrl(shareUrl string) (*VideoParseInfo, error) {
 
 	// 西瓜视频解析方式不一样
 	if strings.Contains(locationRes.Host, "ixigua.com") {
-		return xiGua{}.parseVideoID(videoId)
+		return (xiGua{requestClient: d.requestClient}).parseVideoID(videoId)
 	}
 
 	return d.parseVideoID(videoId)
@@ -255,7 +255,7 @@ func (d douYin) parseVideoIdFromPath(urlPath string) (string, error) {
 }
 
 func (d douYin) getRedirectUrl(videoInfo *VideoParseInfo) {
-	client := newClient()
+	client := d.newClient()
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 	res2, _ := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).

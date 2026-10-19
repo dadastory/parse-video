@@ -17,7 +17,7 @@ var sohuBase64VidRe = regexp.MustCompile(`/v/([A-Za-z0-9+/=]+)\.html`)
 var sohuUserVidRe = regexp.MustCompile(`/?us/\d+/(\d+)\.shtml`)
 
 // sohuVideo 搜狐视频解析器
-type sohuVideo struct{}
+type sohuVideo struct{ requestClient }
 
 // parseShareUrl 根据分享链接解析搜狐视频信息
 func (s sohuVideo) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
@@ -41,7 +41,7 @@ func (s sohuVideo) parseVideoID(videoId string) (*VideoParseInfo, error) {
 		videoId,
 	)
 
-	client := newClient()
+	client := s.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(apiUrl)

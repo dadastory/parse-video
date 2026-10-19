@@ -1,37 +1,48 @@
 package parser
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/tidwall/gjson"
-
 )
 
-type redBook struct{}
+type redBook struct{ requestClient }
 
 func (r redBook) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
-	client := newClient()
+	client := r.newClient()
 	videoRes, err := client.R().
-		SetHeader(HttpHeaderUserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0").
+		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(shareUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	re := regexp.MustCompile(`window.__INITIAL_STATE__\s*=\s*(.*?)</script>`)
+	if videoRes.IsError() {
+		return nil, ErrNoMedia
+	}
+
+	re := regexp.MustCompile(`(?s)window.__INITIAL_STATE__\s*=\s*(.*?)</script>`)
 	findRes := re.FindSubmatch(videoRes.Body())
 	if len(findRes) < 2 {
 		return nil, errors.New("parse video json info from html fail")
 	}
 
-	jsonBytes := bytes.TrimSpace(findRes[1])
+	jsonBytes := findRes[1]
+	if gjson.GetBytes(jsonBytes, "noteData.hasError").Bool() {
+		return nil, ErrNoMedia
+	}
 
 	nodeId := gjson.GetBytes(jsonBytes, "note.currentNoteId").String()
-	data := gjson.GetBytes(jsonBytes, fmt.Sprintf("note.noteDetailMap.%s.note", nodeId))
+	data := gjson.GetBytes(jsonBytes, "noteData.data.noteData")
+	if !data.Exists() {
+		data = gjson.GetBytes(jsonBytes, fmt.Sprintf("note.noteDetailMap.%s.note", nodeId))
+	}
+	if !data.Exists() {
+		return nil, ErrNoMedia
+	}
 
 	videoUrl := data.Get("video.media.stream.h264.0.masterUrl").String()
 
@@ -40,7 +51,7 @@ func (r redBook) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	images := make([]ImgInfo, 0, len(imagesObjArr))
 	if len(videoUrl) <= 0 {
 		for _, imageItem := range imagesObjArr {
-			imageUrl := imageItem.Get("urlDefault").String()
+			imageUrl := redBookImageURL(imageItem)
 			if len(imageUrl) <= 0 {
 				continue
 			}
@@ -72,12 +83,37 @@ func (r redBook) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	parseInfo := &VideoParseInfo{
 		Title:    data.Get("title").String(),
 		VideoUrl: data.Get("video.media.stream.h264.0.masterUrl").String(),
-		CoverUrl: data.Get("imageList.0.urlDefault").String(),
+		CoverUrl: redBookImageURL(data.Get("imageList.0")),
 		Images:   images,
 	}
 	parseInfo.Author.Uid = data.Get("user.userId").String()
 	parseInfo.Author.Name = data.Get("user.nickname").String()
 	parseInfo.Author.Avatar = data.Get("user.avatar").String()
 
+	if parseInfo.VideoUrl == "" && len(images) == 0 {
+		return nil, ErrNoMedia
+	}
 	return parseInfo, nil
+}
+
+func redBookImageURL(image gjson.Result) string {
+	for _, field := range []string{"urlDefault", "url"} {
+		if value := image.Get(field).String(); value != "" {
+			return value
+		}
+	}
+	var fallback string
+	for _, info := range image.Get("infoList").Array() {
+		value := info.Get("url").String()
+		if value == "" {
+			continue
+		}
+		if info.Get("imageScene").String() == "WB_DFT" {
+			return value
+		}
+		if fallback == "" {
+			fallback = value
+		}
+	}
+	return fallback
 }

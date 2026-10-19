@@ -12,10 +12,10 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type kuaiShou struct{}
+type kuaiShou struct{ requestClient }
 
 func (k kuaiShou) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
-	client := newClient()
+	client := k.newClient()
 	//// disable redirects in the HTTP client, get params before redirects
 	//client.SetRedirectPolicy(resty.NoRedirectPolicy())
 	// 设置自定义重定向策略

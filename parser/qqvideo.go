@@ -14,7 +14,7 @@ import (
 var qqVidPathRe = regexp.MustCompile(`/x/(?:page|cover)/(?:[^/]+/)?(\w+)\.html`)
 
 // qqVideo 腾讯视频解析器
-type qqVideo struct{}
+type qqVideo struct{ requestClient }
 
 // parseShareUrl 根据分享链接解析腾讯视频信息
 func (q qqVideo) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
@@ -37,7 +37,7 @@ func (q qqVideo) parseVideoID(videoId string) (*VideoParseInfo, error) {
 		videoId,
 	)
 
-	client := newClient()
+	client := q.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(apiUrl)

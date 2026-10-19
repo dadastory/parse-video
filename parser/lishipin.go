@@ -10,8 +10,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type liShiPin struct {
-}
+type liShiPin struct{ requestClient }
 
 func (l liShiPin) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := fmt.Sprintf("https://www.pearvideo.com/videoStatus.jsp?contId=%s&mrd=%d", videoId, time.Now().Unix())
@@ -20,7 +19,7 @@ func (l liShiPin) parseVideoID(videoId string) (*VideoParseInfo, error) {
 		HttpHeaderUserAgent: "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
 	}
 
-	client := newClient()
+	client := l.newClient()
 	res, err := client.R().
 		SetHeaders(headers).
 		Get(reqUrl)

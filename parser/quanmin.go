@@ -7,7 +7,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type quanMin struct{}
+type quanMin struct{ requestClient }
 
 func (q quanMin) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	urlRes, err := url.Parse(shareUrl)
@@ -25,7 +25,7 @@ func (q quanMin) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 
 func (q quanMin) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := "https://quanmin.hao222.com/wise/growth/api/sv/immerse?source=share-h5&pd=qm_share_mvideo&_format=json&vid=" + videoId
-	client := newClient()
+	client := q.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(reqUrl)

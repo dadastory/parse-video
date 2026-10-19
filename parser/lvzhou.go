@@ -7,11 +7,10 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type lvZhou struct {
-}
+type lvZhou struct{ requestClient }
 
 func (l lvZhou) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
-	client := newClient()
+	client := l.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(shareUrl)

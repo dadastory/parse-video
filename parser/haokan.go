@@ -7,8 +7,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type haoKan struct {
-}
+type haoKan struct{ requestClient }
 
 func (h haoKan) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	urlInfo, err := url.Parse(shareUrl)
@@ -23,7 +22,7 @@ func (h haoKan) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 
 func (h haoKan) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := "https://haokan.baidu.com/v?_format=json&vid=" + videoId
-	client := newClient()
+	client := h.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(reqUrl)

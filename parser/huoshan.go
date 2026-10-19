@@ -7,12 +7,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type huoShan struct {
-}
+type huoShan struct{ requestClient }
 
 func (h huoShan) parseVideoID(videoId string) (*VideoParseInfo, error) {
 	reqUrl := "https://share.huoshan.com/api/item/info?item_id=" + videoId
-	client := newClient()
+	client := h.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		Get(reqUrl)
@@ -33,7 +32,7 @@ func (h huoShan) parseVideoID(videoId string) (*VideoParseInfo, error) {
 }
 
 func (h huoShan) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
-	client := newClient()
+	client := h.newClient()
 	// disable redirects in the HTTP client, get params before redirects
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 	res, err := client.R().

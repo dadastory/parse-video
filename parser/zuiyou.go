@@ -8,7 +8,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type zuiYou struct{}
+type zuiYou struct{ requestClient }
 
 func (z zuiYou) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 	urlInfo, err := url.Parse(shareUrl)
@@ -28,7 +28,7 @@ func (z zuiYou) parseShareUrl(shareUrl string) (*VideoParseInfo, error) {
 		"pid":  intPid,
 	}
 
-	client := newClient()
+	client := z.newClient()
 	res, err := client.R().
 		SetHeader(HttpHeaderUserAgent, DefaultUserAgent).
 		SetBody(postData).
